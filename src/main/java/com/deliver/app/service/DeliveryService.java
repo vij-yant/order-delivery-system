@@ -1,5 +1,7 @@
 package com.deliver.app.service;
 
+import com.deliver.app.command.DeliverCommand;
+import com.deliver.app.command.PickUpCommand;
 import com.deliver.app.model.Agent;
 import com.deliver.app.model.Order;
 import com.deliver.app.model.OrderStatus;
@@ -53,11 +55,11 @@ public class DeliveryService {
         if(agent.tryAssign()) {
             // Set order status -> pickedUp
             order.setStatus(OrderStatus.PICKED_UP);
-            listener.onPickup(order,agent);
+            new PickUpCommand(order,agent,listener).execute();
 
             // Set order status -> Delivered
             order.setStatus(OrderStatus.DELIVERED);
-            listener.onDeliver(order,agent);
+            new DeliverCommand(order,agent,listener).execute();
         }
         agent.release();
     }
