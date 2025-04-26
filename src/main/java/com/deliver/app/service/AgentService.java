@@ -6,15 +6,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AgentService {
+    private final Map<String, Agent> agentsById;
+    private final Map<String, List<Agent>> agentsByPinCode;
 
-    private final Map<String, Agent> agentsById = new ConcurrentHashMap<>();
-    private final Map<String, Queue<Agent>> agentsByPinCode = new ConcurrentHashMap<>();
-    private static final AgentService instance = new AgentService();
-    private AgentService(){}
-    public static AgentService getInstance() {
-        return instance;
+    public AgentService(){
+        agentsById = new ConcurrentHashMap<>();
+        agentsByPinCode = new ConcurrentHashMap<>();
     }
-
     public void registerAgent(Agent agent) {
         agentsById.put(agent.getAgentId(),agent);
         for(String pinCode : agent.getPinCodes()) {
@@ -22,25 +20,7 @@ public class AgentService {
         }
     }
 
-    public Agent getNextAvailableAgent(String pinCode) {
-        Queue<Agent> queue = agentsByPinCode.get(pinCode);
-        if (queue == null || queue.isEmpty()) return null;
-
-        Agent agent = queue.poll();  // Round-robin: fetch head
-        queue.add(agent);            // Push to back
-        return agent;
-    }
-
-    public Agent getAgentById(String agentId) {
-        return agentsById.get(agentId);
-    }
-
-    public List<Agent> getAgentsByPinCode(String pinCode) {
-        return new ArrayList<>(agentsByPinCode.get(pinCode));
-    }
-
-    public void clear() {
-        agentsById.clear();
-        agentsByPinCode.clear();
+    public List<Agent> getAllAgentsByPinCode(String pinCode) {
+        return agentsByPinCode.getOrDefault(pinCode,new ArrayList<>());
     }
 }

@@ -1,19 +1,16 @@
 package com.deliver.app.service;
 
-import com.deliver.app.strategy.AssignmentStrategy;
-
 public class DeliveryTask implements Runnable{
     private final String pincode;
-    private final AssignmentStrategy strategy;
+    private final DeliveryService deliveryService;
 
-    public DeliveryTask(String pincode, AssignmentStrategy strategy) {
+    public DeliveryTask(String pincode, DeliveryService deliveryService) {
         this.pincode = pincode;
-        this.strategy = strategy;
+        this.deliveryService = deliveryService;
     }
 
     @Override
     public void run() {
-        DeliveryService deliveryService = new DeliveryService(strategy);
-        deliveryService.processPinCodeDeliveries(pincode);
+        deliveryService.processDeliveriesForPinCode(pincode);
     }
 }

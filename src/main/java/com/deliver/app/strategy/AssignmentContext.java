@@ -5,6 +5,5 @@ import com.deliver.app.model.Order;
 
 import java.util.List;
 
-public interface AssignmentStrategy {
-    public Agent assignAgent(AssignmentContext context);
+public record AssignmentContext(Order order, List<Agent> agents) {
 }

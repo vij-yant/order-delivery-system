@@ -4,12 +4,16 @@ import com.deliver.app.model.Agent;
 import com.deliver.app.model.Order;
 import com.deliver.app.observer.OrderEventListener;
 
-public class DeliverCommand implements Command{
-    private final Order order;
-    private final Agent agent;
-    private final OrderEventListener listener;
+public class DeliverCommand implements Command {
+    private Order order;
+    private Agent agent;
+    private OrderEventListener listener;
 
-    public DeliverCommand(Order order, Agent agent, OrderEventListener listener) {
+    public DeliverCommand() {
+        // No args constructor
+    }
+
+    public void setContext(Order order, Agent agent, OrderEventListener listener) {
         this.order = order;
         this.agent = agent;
         this.listener = listener;
@@ -17,6 +21,9 @@ public class DeliverCommand implements Command{
 
     @Override
     public void execute() {
-        listener.onDeliver(order,agent);
+        if (order == null || agent == null || listener == null) {
+            throw new IllegalStateException("DeliverCommand not properly initialized");
+        }
+        listener.onDeliver(order, agent);
     }
 }

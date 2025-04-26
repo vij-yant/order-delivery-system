@@ -2,9 +2,12 @@ package com.deliver.app;
 
 import com.deliver.app.model.Agent;
 import com.deliver.app.model.Order;
+import com.deliver.app.observer.ConsoleLogger;
+import com.deliver.app.observer.OrderEventListener;
 import com.deliver.app.service.AgentService;
 import com.deliver.app.service.DeliveryService;
 import com.deliver.app.service.OrderService;
+import com.deliver.app.strategy.AssignmentStrategy;
 import com.deliver.app.strategy.DeliveryWindowStrategy;
 
 import java.time.LocalDateTime;
@@ -13,12 +16,10 @@ import java.util.Set;
 public class DeliveryWindowOverlapTest {
     public static void main(String[] args) {
         // Services
-        OrderService orderService = OrderService.getInstance();
-        AgentService agentService = AgentService.getInstance();
-
-        // Clear previous data
-        orderService.clear();
-        agentService.clear();
+        OrderService orderService = new OrderService();
+        AgentService agentService = new AgentService();
+        AssignmentStrategy strategy = new DeliveryWindowStrategy();
+        OrderEventListener listener = new ConsoleLogger();
 
         // Create Agents
         agentService.registerAgent(new Agent.AgentBuilder()
@@ -57,7 +58,7 @@ public class DeliveryWindowOverlapTest {
                 .build());
 
         // Use DeliveryWindowStrategy
-        DeliveryService deliveryService = new DeliveryService(new DeliveryWindowStrategy());
+        DeliveryService deliveryService = new DeliveryService(strategy,agentService,orderService,listener);
 
         // Run deliveries
         deliveryService.executeDeliveries();
